@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SingleNote } from "../features/notes/notesTypes";
 import NoteRow from "./NoteRow";
 import { selectNotes } from "../features/notes/notesSlice";
@@ -6,19 +6,31 @@ import { RootState } from "../app/store";
 import { CategoryType } from "../generalTypes/types";
 import { useNotesByCategories } from "../app/hooks";
 import SummaryRow from "./SummaryRow";
+import { switchShowState } from "../features/userOption/userOptionSlice";
 type PropsType = {
   tableFor: "Summary" | "List of notes";
 };
 
 const Table = ({ tableFor }: PropsType) => {
   const notes = useSelector((state: RootState) => state.notes.notes);
+  const showActive = useSelector(
+    (state: RootState) => state.userOption.showActive
+  );
+  const dispatch = useDispatch();
   let notesPerCategory = useNotesByCategories();
 
   console.log(notes);
   if (tableFor === "List of notes") {
     return (
       <>
-        <button className="show-switch btn">Show archived notes</button>
+        <button
+          onClick={() => {
+            dispatch(switchShowState());
+          }}
+          className="show-switch btn"
+        >
+          {showActive ? "Show archived notes" : "Show active notes"}
+        </button>
         <section className="tasks section">
           <header className="section-header tasks-row">
             <p className="header-first-column">Name</p>
@@ -32,9 +44,11 @@ const Table = ({ tableFor }: PropsType) => {
             </div>
           </header>
           <section className="tasks-container">
-            {notes.map((singleNote) => (
-              <NoteRow key={singleNote.id} note={singleNote} />
-            ))}
+            {notes
+              .filter((singleNote) => singleNote.isArchived === !showActive)
+              .map((singleNote) => (
+                <NoteRow key={singleNote.id} note={singleNote} />
+              ))}
           </section>
           <button className="btn" id="createBtn">
             Create Note
