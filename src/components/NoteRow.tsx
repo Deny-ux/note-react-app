@@ -2,12 +2,20 @@ import { icons } from "../icons";
 import { SingleNote } from "../features/notes/notesTypes";
 import { changeDateFormat, extractDates } from "../utils/dates";
 import { sliceSentence } from "../utils/util";
+import { useDispatch } from "react-redux";
+import {
+  deleteNote,
+  setActiveEditNoteId,
+  switchArchiveNoteState,
+} from "../features/notes/notesSlice";
+import { showEditModal } from "../features/modals/modalsSlice";
 
 type PropsType = {
   note: SingleNote;
 };
 
 const NoteRow = ({ note }: PropsType) => {
+  const dispatch = useDispatch();
   return (
     <article className="single-task tasks-row" date-id={note.id}>
       <div className="task-name">
@@ -22,7 +30,9 @@ const NoteRow = ({ note }: PropsType) => {
         <button
           className="note-control-btn"
           onClick={() => {
-            console.log("edit");
+            dispatch(setActiveEditNoteId(note.id));
+            dispatch(showEditModal());
+            // dispatch(editNote({ id: note.id, newInfo: { ...note } }));
           }}
         >
           {icons.edit}
@@ -30,8 +40,7 @@ const NoteRow = ({ note }: PropsType) => {
         <button
           className="note-control-btn"
           onClick={() => {
-            console.log("archive");
-            console.log(note.id);
+            dispatch(switchArchiveNoteState(note.id));
           }}
         >
           {icons.archive}
@@ -39,7 +48,7 @@ const NoteRow = ({ note }: PropsType) => {
         <button
           className="note-control-btn"
           onClick={() => {
-            console.log("delete");
+            dispatch(deleteNote(note.id));
           }}
         >
           {icons.delete}

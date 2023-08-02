@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
-import { CategoryType, SummaryRowType } from "../generalTypes/types";
+import { SummaryRowType } from "../generalTypes/types";
 
 export function useNotesByCategories() {
   const notes = useSelector((state: RootState) => state.notes.notes);
@@ -28,5 +28,3 @@ export function useNotesByCategories() {
 
   return sortedByCategoryNotes;
 }
-
-export {};

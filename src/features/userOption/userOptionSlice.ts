@@ -10,7 +10,6 @@ export const userOptionSlice = createSlice({
   reducers: {
     switchShowState: (state) => {
       state.showActive = !state.showActive;
-      console.log(`show ${state.showActive}`);
     },
   },
 });

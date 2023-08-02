@@ -65,25 +65,14 @@ const initialState: NotesState = {
       id: "7",
     },
   ],
+  activeEditNoteId: "",
 };
 
 export const notesSlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
-    // increment: (state) => {
-    //   state.value += 1;
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1;
-    // },
-    // // Use the PayloadAction type to declare the contents of `action.payload`
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload;
-    // },
     createNote: (state, action: PayloadAction<CreateNote>) => {
-      console.log("createNote");
-
       const newNote: SingleNote = {
         ...action.payload,
         id: nanoid(),
@@ -94,27 +83,42 @@ export const notesSlice = createSlice({
     },
     // payload: id
     switchArchiveNoteState: (state, action: PayloadAction<string>) => {
-      console.log("switchArchiveNoteState");
-
       const foundNote = state.notes.find((note) => note.id === action.payload);
       if (!foundNote) {
         throw new Error(`Cannot find note with provided id: ${action.payload}`);
       }
       foundNote.isArchived = !foundNote.isArchived;
     },
-    //
+    // payload: id
+    deleteNote: (state, action: PayloadAction<string>) => {
+      state.notes = state.notes.filter((note) => note.id !== action.payload);
+    },
     editNote: (state, action: PayloadAction<EditNote>) => {
-      console.log("editNote");
-      let foundNote = state.notes.find((note) => note.id === action.payload.id);
-      console.log(foundNote);
-
-      // foundNote = { ...action.payload.newInfo,  };
+      state.notes = state.notes.map((note) => {
+        if (note.id === action.payload.id) {
+          return { ...note, ...action.payload.newInfo };
+        }
+        return note;
+      });
+    },
+    // payload: id
+    setActiveEditNoteId: (state, action: PayloadAction<string>) => {
+      let foundNote = state.notes.find((note) => note.id === action.payload);
+      if (!foundNote) {
+        throw new Error(`Cannot find note with provided id: ${action.payload}`);
+      }
+      state.activeEditNoteId = action.payload;
     },
   },
 });
 
-export const { editNote, createNote, switchArchiveNoteState } =
-  notesSlice.actions;
+export const {
+  editNote,
+  createNote,
+  switchArchiveNoteState,
+  setActiveEditNoteId,
+  deleteNote,
+} = notesSlice.actions;
 
 export const selectNotes = (state: RootState) => state.notes.notes;
 

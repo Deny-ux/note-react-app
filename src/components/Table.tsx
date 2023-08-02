@@ -7,6 +7,7 @@ import { CategoryType } from "../generalTypes/types";
 import { useNotesByCategories } from "../app/hooks";
 import SummaryRow from "./SummaryRow";
 import { switchShowState } from "../features/userOption/userOptionSlice";
+import { showCreateModal } from "../features/modals/modalsSlice";
 type PropsType = {
   tableFor: "Summary" | "List of notes";
 };
@@ -50,7 +51,13 @@ const Table = ({ tableFor }: PropsType) => {
                 <NoteRow key={singleNote.id} note={singleNote} />
               ))}
           </section>
-          <button className="btn" id="createBtn">
+          <button
+            className="btn"
+            id="createBtn"
+            onClick={() => {
+              dispatch(showCreateModal());
+            }}
+          >
             Create Note
           </button>
         </section>

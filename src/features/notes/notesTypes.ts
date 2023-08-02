@@ -17,6 +17,7 @@ export interface CreateNote {
 
 export interface NotesState {
   notes: SingleNote[];
+  activeEditNoteId: string;
 }
 
 export interface EditNote {
@@ -25,6 +26,5 @@ export interface EditNote {
     name: string;
     category: CategoryType;
     content: string;
-    isArchived: boolean;
   };
 }

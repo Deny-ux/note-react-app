@@ -1,17 +1,30 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createNote } from "../features/notes/notesSlice";
-import { CategoryType } from "../generalTypes/types";
-import { hideModals } from "../features/modals/modalsSlice";
 import { FaTimes } from "react-icons/fa";
+import { hideModals } from "../features/modals/modalsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { useState } from "react";
+import { CategoryType } from "../generalTypes/types";
+import { editNote } from "../features/notes/notesSlice";
 
-const CreateNoteModal = () => {
-  const [name, setName] = useState("");
-  const [content, setContent] = useState("");
-  const [category, setCategory] = useState<CategoryType>("Task");
+const EditNoteModal = () => {
   const dispatch = useDispatch();
+  const { notes, activeEditNoteId } = useSelector(
+    (state: RootState) => state.notes
+  );
+  const foundNote = notes.find((note) => note.id === activeEditNoteId);
+  const [name, setName] = useState(foundNote?.name);
+  const [content, setContent] = useState(foundNote?.content);
+  const [category, setCategory] = useState(foundNote?.category);
+
+  if (!foundNote) {
+    return (
+      <section>
+        <h4>Cannot find provided note please refresh the page...</h4>
+      </section>
+    );
+  }
   return (
-    <div className="modal create-modal show-modal ">
+    <div className="modal edit-modal show-modal">
       <button
         className="close-btn note-control-btn"
         onClick={(e) => {
@@ -20,28 +33,44 @@ const CreateNoteModal = () => {
       >
         <FaTimes />
       </button>
-      <h4>Create New Note</h4>
-      <form className="modal-form">
+      <h4>Edit Note</h4>
+      <form
+        className="modal-form edit-modal-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          dispatch(hideModals());
+          dispatch(
+            editNote({
+              id: foundNote.id,
+              newInfo: {
+                category: category as CategoryType,
+                content: content as string,
+                name: name as string,
+              },
+            })
+          );
+        }}
+      >
         <div className="form-group row">
-          <label htmlFor="inputPassword" className="col-sm-4 col-form-label">
-            name
+          <label htmlFor="note-content" className="col-sm-4 col-form-label">
+            New Name
           </label>
           <div className="col-sm-8">
             <input
               type="text"
               className="form-control"
-              id="inputPassword"
+              id="note-content"
               name="name"
-              autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoFocus
             />
           </div>
         </div>
         <br />
         <div className="form-group row">
           <label htmlFor="note-content" className="col-sm-4 col-form-label">
-            Type content here
+            New content
           </label>
           <div className="col-sm-8">
             <textarea
@@ -73,19 +102,16 @@ const CreateNoteModal = () => {
             </select>
           </div>
         </div>
+
         <button
           type="submit"
           className="btn create"
           disabled={!Boolean(name && content)}
-          onClick={(e) => {
-            dispatch(createNote({ category, content, name }));
-            dispatch(hideModals());
-          }}
         >
-          Create
+          Save changes
         </button>
       </form>
     </div>
   );
 };
-export default CreateNoteModal;
+export default EditNoteModal;
