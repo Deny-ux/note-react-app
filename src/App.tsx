@@ -1,5 +1,12 @@
+import Table from "./components/Table";
+
 function App() {
-  return <div className="App">App</div>;
+  return (
+    <>
+      <Table tableFor="List of notes" />;
+      <Table tableFor="Summary" />
+    </>
+  );
 }
 
 export default App;

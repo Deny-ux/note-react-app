@@ -29,3 +29,8 @@ export function changeDateFormat(date: CreationDate) {
 
   return `${months[month - 1]} ${day}, ${year}`;
 }
+
+export function extractDates(inputString: string) {
+  const regex = /(\d{1,2})\/\d{1,2}\/\d{4}/g;
+  return inputString.match(regex)?.join(", ") ?? "";
+}

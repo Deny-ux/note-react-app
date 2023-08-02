@@ -113,9 +113,9 @@ export const notesSlice = createSlice({
   },
 });
 
-// export const {increment} = notesSlice.actions;
+export const { editNote, createNote, switchArchiveNoteState } =
+  notesSlice.actions;
 
-// Other code such as selectors can use the imported `RootState` type
-export const selectCount = (state: RootState) => state.notes.value;
+export const selectNotes = (state: RootState) => state.notes.notes;
 
 export default notesSlice.reducer;
